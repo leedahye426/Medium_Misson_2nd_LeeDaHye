@@ -1,39 +1,40 @@
-package com.ll.medium_clone_coding.domain.member.member.entity;
+package com.ll.medium_clone_coding.domain.post.post.entity;
 
-import com.ll.medium_clone_coding.domain.post.post.entity.Post;
+import com.ll.medium_clone_coding.domain.member.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
-public class Member {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true)
-    private String username;
+    private String title;
 
-    private String password;
+    private String body;
 
     @CreatedDate
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "author")
-    private List<Post> postList = new ArrayList<>();
+    @LastModifiedDate
+    private LocalDateTime modifyDate;
+
+    private boolean isPublished;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member author;
 }

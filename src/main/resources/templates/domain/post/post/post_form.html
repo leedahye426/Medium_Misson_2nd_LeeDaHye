@@ -1,0 +1,23 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <h5 class="my-3 border-bottom pb-2">글 쓰기</h5>
+    <form th:object="${postForm}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" th:field="*{title}" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="body" class="form-label">본문</label>
+            <textarea th:field="*{body}" class="form-control" rows="10" required></textarea>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="true" name="isPublished" id="isPublished">
+            <label class="form-check-label" for="isPublished">
+                게시글을 공개하시겠습니까?
+            </label>
+        </div>
+        <input type="submit" value="저장하기" class="btn btn-primary my-2">
+    </form>
+</div>
+</html>

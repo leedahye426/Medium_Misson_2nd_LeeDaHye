@@ -46,4 +46,6 @@ public class MemberController {
     public String login() {
         return "domain/member/member/login";
     }
+
+
 }

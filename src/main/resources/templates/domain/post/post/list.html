@@ -1,20 +1,15 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container my-3">
-    <header class="bg-dark py-5">
-        <div class="container px-4 px-lg-5 my-5">
-            <div class="text-center text-white">
-                <h1 class="display-4 fw-bolder">Medium</h1>
-                <p class="lead fw-normal text-white-50 mb-0">유료 멤버십에 가입하면 유료글을 열람할 수 있습니다.</p>
-            </div>
-        </div>
-    </header>
+
     <!-- Section-->
     <section class="py-5">
+
         <div class="container px-4 px-lg-5 mt-5">
+            <h2 th:text="${title}" class="text-center"></h2>
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                 <div class="col mb-5" th:each="post : ${postList}">
 
-                    <div class="card h-100" >
+                    <div class="card h-100">
                         <!-- Product image-->
                         <!--                        <img class="card-img-top" src="" alt="..."/>-->
                         <!-- Product details-->
@@ -39,6 +34,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-6">
+                <a th:href="@{/post/write}" class="btn btn-dark">게시글 등록하기</a>
             </div>
         </div>
     </section>
