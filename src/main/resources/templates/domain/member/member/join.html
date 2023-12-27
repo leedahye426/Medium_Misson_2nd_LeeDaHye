@@ -1,0 +1,19 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <form th:action="@{/member/join}" method="post" th:object="${memberCreateForm}">
+        <div class="mb-3">
+            <label for="username" class="form-label">사용자ID</label>
+            <input type="text" class="form-control" th:field="*{username}">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">비밀번호</label>
+            <input type="password" class="form-control" th:field="*{password}">
+        </div>
+        <div class="mb-3">
+            <label for="passwordConfirm" class="form-label">비밀번호 확인</label>
+            <input type="password" class="form-control" th:field="*{passwordConfirm}">
+        </div>
+        <button type="submit" class="btn btn-dark">회원가입</button>
+    </form>
+</div>
+</html>
