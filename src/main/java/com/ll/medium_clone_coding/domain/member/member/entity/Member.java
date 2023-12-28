@@ -36,4 +36,6 @@ public class Member {
     private List<Post> postList = new ArrayList<>();
 
     private boolean isPaid;
+
+
 }

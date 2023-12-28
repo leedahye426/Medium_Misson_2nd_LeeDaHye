@@ -14,4 +14,6 @@ public class PostForm {
     private String body;
 
     private boolean isPublished;
+
+    private boolean isPaid;
 }

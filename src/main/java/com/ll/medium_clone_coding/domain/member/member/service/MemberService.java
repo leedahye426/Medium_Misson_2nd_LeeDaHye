@@ -38,4 +38,10 @@ public class MemberService {
 
         return member.get();
     }
+
+    @Transactional
+    public void setPaidForMember(String username, boolean isPaid) {
+        Member member = getMember(username);
+        member.setPaid(isPaid);
+    }
 }

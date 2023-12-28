@@ -16,29 +16,30 @@ public class NotProd {
             Member admin = memberService.join("admin", "1234");
             Member member1 = memberService.join("user1", "1234");
             Member member2 = memberService.join("user2", "1234");
+            memberService.setPaidForMember("user2", true);
 
             for(int i = 1; i <= 10; i++) {
                 String title = "user1의 공개 글 제목" + i;
                 String body = "내용" + i;
-                postService.write(member1, title, body, true);
+                postService.write(member1, title, body, true, false);
             }
 
             for(int i = 1; i <= 10; i++) {
                 String title = "user1의 비공개 글 제목" + i;
                 String body = "내용" + i;
-                postService.write(member1, title, body, false);
+                postService.write(member1, title, body, false, false);
             }
 
             for(int i = 1; i <= 10; i++) {
-                String title = "user2의 공개 글 제목" + i;
+                String title = "user2의 무료 글 제목" + i;
                 String body = "내용" + i;
-                postService.write(member2, title, body, true);
+                postService.write(member2, title, body, true, false);
             }
 
             for(int i = 1; i <= 10; i++) {
-                String title = "user2의 비공개 글 제목" + i;
+                String title = "user2의 유료 글 제목" + i;
                 String body = "내용" + i;
-                postService.write(member2, title, body, false);
+                postService.write(member2, title, body, true, true);
             }
 
         };

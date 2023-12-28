@@ -23,12 +23,13 @@ public class PostService {
     }
 
     @Transactional
-    public Post write(Member author, String title, String body, boolean isPublished) {
+    public Post write(Member author, String title, String body, boolean isPublished, boolean isPaid) {
         Post post = Post.builder()
                 .author(author)
                 .title(title)
                 .body(body)
                 .isPublished(isPublished)
+                .isPaid(isPaid)
                 .build();
 
         postRepository.save(post);
@@ -37,7 +38,7 @@ public class PostService {
     }
 
     public Page<Post> getList(int page) {
-        Pageable pageable = PageRequest.of(page, 12);
+        Pageable pageable = PageRequest.of(page, 9);
         return postRepository.findByIsPublishedTrueOrderByCreateDateDesc(pageable);
     }
 
@@ -55,10 +56,11 @@ public class PostService {
     }
 
     @Transactional
-    public void modify(Post post, String title, String body, boolean isPublished) {
+    public void modify(Post post, String title, String body, boolean isPublished, boolean isPaid) {
         post.setTitle(title);
         post.setBody(body);
         post.setPublished(isPublished);
+        post.setPaid(isPaid);
     }
 
     @Transactional
