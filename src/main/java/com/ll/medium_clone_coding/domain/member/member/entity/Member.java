@@ -2,10 +2,7 @@ package com.ll.medium_clone_coding.domain.member.member.entity;
 
 import com.ll.medium_clone_coding.domain.post.post.entity.Post;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -17,6 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = PROTECTED)
@@ -36,4 +34,6 @@ public class Member {
 
     @OneToMany(mappedBy = "author")
     private List<Post> postList = new ArrayList<>();
+
+    private boolean isPaid;
 }

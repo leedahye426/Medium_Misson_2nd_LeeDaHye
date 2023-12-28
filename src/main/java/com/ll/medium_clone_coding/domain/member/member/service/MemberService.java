@@ -22,6 +22,7 @@ public class MemberService {
         Member member = Member.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
+                .isPaid(false)
                 .build();
 
         memberRepository.save(member);

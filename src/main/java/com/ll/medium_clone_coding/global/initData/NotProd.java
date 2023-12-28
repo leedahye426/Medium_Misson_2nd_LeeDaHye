@@ -13,14 +13,32 @@ public class NotProd {
     @Bean
     public ApplicationRunner initNotProd(MemberService memberService, PostService postService) {
         return args -> {
+            Member admin = memberService.join("admin", "1234");
             Member member1 = memberService.join("user1", "1234");
             Member member2 = memberService.join("user2", "1234");
-            Member member3 = memberService.join("user3", "1234");
 
-            for(int i = 1; i <= 100; i++) {
-                String title = "제목" + i;
+            for(int i = 1; i <= 10; i++) {
+                String title = "user1의 공개 글 제목" + i;
                 String body = "내용" + i;
                 postService.write(member1, title, body, true);
+            }
+
+            for(int i = 1; i <= 10; i++) {
+                String title = "user1의 비공개 글 제목" + i;
+                String body = "내용" + i;
+                postService.write(member1, title, body, false);
+            }
+
+            for(int i = 1; i <= 10; i++) {
+                String title = "user2의 공개 글 제목" + i;
+                String body = "내용" + i;
+                postService.write(member2, title, body, true);
+            }
+
+            for(int i = 1; i <= 10; i++) {
+                String title = "user2의 비공개 글 제목" + i;
+                String body = "내용" + i;
+                postService.write(member2, title, body, false);
             }
 
         };
