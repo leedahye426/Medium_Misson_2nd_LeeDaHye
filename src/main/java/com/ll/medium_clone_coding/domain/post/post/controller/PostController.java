@@ -42,16 +42,8 @@ public class PostController {
             return "domain/post/post/post_form";
         }
 
-        if (postForm.isPublished() != true) {
-            postForm.setPublished(false);
-        }
-
-        if (postForm.isPaid() != true) {
-            postForm.setPaid(false);
-        }
-
         Member member = memberService.getMember(principal.getName());
-        Post post = postService.write(member, postForm.getTitle(), postForm.getBody(), postForm.isPublished(), postForm.isPaid());
+        Post post = postService.write(member, postForm.getTitle(), postForm.getBody(), postForm.getIsPublished(), postForm.getIsPaid());
 
         return "redirect:/post/%s".formatted(post.getId());
     }
@@ -105,18 +97,25 @@ public class PostController {
         // 현재 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            Member member = memberService.getMember(username);
+        if(!post.isPaid()) { // 무료글
+            model.addAttribute("content", post.getBody());
+        } else { // 유료글
+                String username = authentication.getName();
 
-            if(!member.isPaid()) {
-                model.addAttribute("content", "이 글은 유료 멤버십 전용 입니다.");
-            } else {
-                model.addAttribute("content", post.getBody());
-            }
-        } else {
-            model.addAttribute("content", "이 글은 유료 멤버십 전용 입니다.");
+                if(username.equals("anonymousUser")) {
+                    model.addAttribute("content", "이 글은 유료 멤버십 전용 입니다.");
+                } else {
+                    Member member = memberService.getMember(username);
+
+                    if(!member.isPaid()) { // 유료 멤버십 미가입 고객
+                        model.addAttribute("content", "이 글은 유료 멤버십 전용 입니다.");
+                    } else { // 유료 멤버십 가입 고객
+                        model.addAttribute("content", post.getBody());
+                    }
+                }
         }
+
+
 
 
         return "domain/post/post/detail";
@@ -133,8 +132,9 @@ public class PostController {
 
         postForm.setTitle(post.getTitle());
         postForm.setBody(post.getBody());
-        postForm.setPublished(false);
-        postForm.setPaid(false);
+        postForm.setIsPublished(String.valueOf(post.isPublished()));
+        postForm.setIsPaid(String.valueOf(post.isPaid()));
+
         return "domain/post/post/post_form";
     }
 
@@ -151,15 +151,8 @@ public class PostController {
             return "domain/post/post/post_form";
         }
 
-        if (postForm.isPublished() != true) {
-            postForm.setPublished(false);
-        }
 
-        if (postForm.isPaid() != true) {
-            postForm.setPaid(false);
-        }
-
-        postService.modify(post, postForm.getTitle(), postForm.getBody(), postForm.isPublished(), postForm.isPaid());
+        postService.modify(post, postForm.getTitle(), postForm.getBody(), postForm.getIsPublished(), postForm.getIsPaid());
 
         return "redirect:/post/%s".formatted(id);
     }

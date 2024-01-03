@@ -13,7 +13,7 @@ public class PostForm {
     @NotBlank(message = "내용은 필수항목입니다.")
     private String body;
 
-    private boolean isPublished;
+    private String isPublished;
 
-    private boolean isPaid;
+    private String isPaid;
 }

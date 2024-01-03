@@ -23,13 +23,13 @@ public class PostService {
     }
 
     @Transactional
-    public Post write(Member author, String title, String body, boolean isPublished, boolean isPaid) {
+    public Post write(Member author, String title, String body, String isPublished, String isPaid) {
         Post post = Post.builder()
                 .author(author)
                 .title(title)
                 .body(body)
-                .isPublished(isPublished)
-                .isPaid(isPaid)
+                .isPublished(Boolean.parseBoolean(isPublished))
+                .isPaid(Boolean.parseBoolean(isPaid))
                 .build();
 
         postRepository.save(post);
@@ -56,11 +56,11 @@ public class PostService {
     }
 
     @Transactional
-    public void modify(Post post, String title, String body, boolean isPublished, boolean isPaid) {
+    public void modify(Post post, String title, String body, String isPublished, String isPaid) {
         post.setTitle(title);
         post.setBody(body);
-        post.setPublished(isPublished);
-        post.setPaid(isPaid);
+        post.setPublished(Boolean.parseBoolean(isPublished));
+        post.setPaid(Boolean.parseBoolean(isPaid));
     }
 
     @Transactional
