@@ -1,7 +1,7 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container my-3">
     <h5 class="my-3 border-bottom pb-2">글 쓰기</h5>
-    <form th:object="${postForm}" method="post">
+    <form th:object="${postForm}" method="post" id="postForm">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <div class="mb-3">
             <label for="title" class="form-label">제목</label>
@@ -9,7 +9,8 @@
         </div>
         <div class="mb-3">
             <label for="body" class="form-label">본문</label>
-            <textarea th:field="*{body}" class="form-control" rows="10" required></textarea>
+            <div id="editor"></div>
+            <input type="hidden" th:field="*{body}" id="hiddenBody"/>
         </div>
         <div class="form-check">
             <input class="form-check-input" type="checkbox" value="true" name="isPublished" id="isPublished" checked
@@ -29,4 +30,24 @@
         <input type="submit" value="저장하기" class="btn btn-primary my-2">
     </form>
 </div>
+
+<script layout:fragment="script"  type="text/javascript">
+    // 에디터 초기화
+    const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        initialEditType: 'markdown',
+        previewStyle: 'vertical',
+        height: '300px',
+    });
+
+    // 수정 폼이 열릴 때 body를 editor에 설정
+    const hiddenBody = document.getElementById('hiddenBody');
+    editor.setMarkdown(hiddenBody.value);
+
+    // 폼 제출 시 에디터의 내용을 hidden input에 복사
+    document.getElementById('postForm').addEventListener('submit', function() {
+        hiddenBody.value = editor.getMarkdown();
+    });
+
+</script>
 </html>
