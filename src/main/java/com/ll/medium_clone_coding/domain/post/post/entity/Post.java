@@ -37,4 +37,6 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member author;
+
+    private boolean isPaid;
 }

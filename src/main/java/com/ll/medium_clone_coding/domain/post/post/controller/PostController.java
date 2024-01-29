@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,18 +38,14 @@ public class PostController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/post/write")
     public String write(@Valid PostForm postForm, BindingResult bindingResult, Principal principal) {
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "domain/post/post/post_form";
         }
 
-        if(postForm.isPublished() != true) {
-            postForm.setPublished(false);
-        }
-
         Member member = memberService.getMember(principal.getName());
-        postService.write(member, postForm.getTitle(), postForm.getBody(), postForm.isPublished());
+        Post post = postService.write(member, postForm.getTitle(), postForm.getBody(), postForm.getIsPublished(), postForm.getIsPaid());
 
-        return "domain/post/post/list";
+        return "redirect:/post/%s".formatted(post.getId());
     }
 
     @GetMapping("/post/list")
@@ -96,6 +94,30 @@ public class PostController {
         Post post = postService.getPost(id);
         model.addAttribute("post", post);
 
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(!post.isPaid()) { // 무료글
+            model.addAttribute("content", post.getBody());
+        } else { // 유료글
+                String username = authentication.getName();
+
+                if(username.equals("anonymousUser")) {
+                    model.addAttribute("content", "이 글은 유료 멤버십 전용 입니다.");
+                } else {
+                    Member member = memberService.getMember(username);
+
+                    if(!member.isPaid()) { // 유료 멤버십 미가입 고객
+                        model.addAttribute("content", "이 글은 유료 멤버십 전용 입니다.");
+                    } else { // 유료 멤버십 가입 고객
+                        model.addAttribute("content", post.getBody());
+                    }
+                }
+        }
+
+
+
+
         return "domain/post/post/detail";
     }
 
@@ -103,11 +125,16 @@ public class PostController {
     @GetMapping("/post/{id}/modify")
     public String modifyForm(@PathVariable("id") long id, Principal principal, PostForm postForm) {
         Post post = postService.getPost(id);
-        if(!post.getAuthor().getUsername().equals(principal.getName())) {
+
+        if (!post.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
+
         postForm.setTitle(post.getTitle());
         postForm.setBody(post.getBody());
+        postForm.setIsPublished(String.valueOf(post.isPublished()));
+        postForm.setIsPaid(String.valueOf(post.isPaid()));
+
         return "domain/post/post/post_form";
     }
 
@@ -117,18 +144,15 @@ public class PostController {
     public String modify(@PathVariable("id") long id, @Valid PostForm postForm, BindingResult bindingResult, Principal principal) {
         Post post = postService.getPost(id);
 
-        if(!post.getAuthor().getUsername().equals(principal.getName())) {
+        if (!post.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "domain/post/post/post_form";
         }
 
-        if(postForm.isPublished() != true) {
-            postForm.setPublished(false);
-        }
 
-        postService.modify(post, postForm.getTitle(), postForm.getBody(), postForm.isPublished());
+        postService.modify(post, postForm.getTitle(), postForm.getBody(), postForm.getIsPublished(), postForm.getIsPaid());
 
         return "redirect:/post/%s".formatted(id);
     }
@@ -138,7 +162,7 @@ public class PostController {
     public String delete(@PathVariable("id") long id, Principal principal) {
         Post post = postService.getPost(id);
 
-        if(!post.getAuthor().getUsername().equals(principal.getName())) {
+        if (!post.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
 

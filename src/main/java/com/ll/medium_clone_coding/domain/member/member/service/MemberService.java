@@ -22,6 +22,7 @@ public class MemberService {
         Member member = Member.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
+                .isPaid(false)
                 .build();
 
         memberRepository.save(member);
@@ -36,5 +37,11 @@ public class MemberService {
         }
 
         return member.get();
+    }
+
+    @Transactional
+    public void setPaidForMember(String username, boolean isPaid) {
+        Member member = getMember(username);
+        member.setPaid(isPaid);
     }
 }
